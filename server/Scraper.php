@@ -2,16 +2,17 @@
 include "./models/DataRowModel.php";
 include "./Helper.php";
 include "./HttpUser.php";
+include "./enums/Genre.php";
 
 $user = new HttpUser();
 $response = $user->Request("https://www.dotabuff.com/players/66296404/matches?enhance=overview&page=1");
 $cleanPage = Helper::CleanInitialPage($response);
-$seperatedTables = Helper::SeperateTables($cleanPage);
+$seperatedRows = Helper::SeperateTables($cleanPage);
 $dataRows = [];
 $allRows = substr_count($cleanPage, 'Skill');
 
 for ($i=0; $i <= $allRows ; $i++) { 
-    $currentRow = $seperatedTables[$i];
+    $currentRow = $seperatedRows[$i];
 
     $hero    = GetHeroName($currentRow);
     $skill   = GetSkillLevel($currentRow);
@@ -71,16 +72,23 @@ function GetGameType($string){
     return $type;
 }
 function GetGameGenre($string){
-    $genre = Helper::get_string_between($string, '<div class="subtext">', '</div></td>');
+    $genres = Genre::GENRES;
+    $genre = '';
+    for ($i=0; $i < count($genres); $i++) { 
+        if (!empty(strstr($string, $genres[$i])))
+        {
+            $genre = $genres[$i];
+            break;
+        }
+    }
 
     return $genre;
 }
 function GetGameLength($string){
-    $length = Helper::get_string_between($string, '</td><td>', '<div class="');
+    $length = Helper::get_string_between($string, '</div></td><td>', '<div class="bar bar-default"><div class="segment');
 
     return $length;
 }
-
 
 var_dump(json_encode($dataRows));
 ?>
