@@ -11,13 +11,13 @@ class HttpUser
                 $curl_h,
                 CURLOPT_HTTPHEADER,
                 array(
-                    'User-Agent: NoBrowser v0.1 beta',
+                    'User-Agent: MozillaTest',
                 )
             );
 
             # do not output, but store to variable
             curl_setopt($curl_h, CURLOPT_RETURNTRANSFER, true);
-
+            
             $response = curl_exec($curl_h);
 
             return $response;

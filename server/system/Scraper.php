@@ -3,6 +3,7 @@ require_once "./models/DataRowModel.php";
 require_once "./system/Helper.php";
 require_once "./system/HttpUser.php";
 require_once "./enums/Genre.php";
+require_once "./sql/database.php";
 
 class Scraper
 {
@@ -11,16 +12,17 @@ class Scraper
 
     public function TraverseDOM()
     {
-        for ($i = 1; $i < 5; $i++) {
+        for ($i = 1; $i < 2; $i++) {
             $user = new HttpUser();
-            $response = $user->Request("https://www.dotabuff.com/players/66296404/matches?enhance=overview&page=" . $i);
+            $response = $user->Request("https://www.dotabuff.com/players/66296404/matches?enhance=overview&page=10");
             $cleanPage = Helper::CleanInitialPage($response);
             $seperatedRows = Helper::SeperateTables($cleanPage);
-
+            //echo($cleanPage);
             $this->ExtractDataRows($seperatedRows);
         }
+        SQL::SaveDataRows($this->dataRows);
 
-        echo (json_encode($this->dataRows));
+        echo(json_encode($this->dataRows));
     }
 
     private function ExtractDataRows($seperatedRows)
@@ -90,7 +92,16 @@ class Scraper
     {
         $type = "TBD";
 
-        !empty(strstr($string, 'Normal')) ? $type = "Normal" : $type = "Ranked";
+        if(!empty(strstr($string, 'Normal')))
+        {
+            $type = "Normal";
+        }
+        else if(!empty(strstr($string, 'Ranked'))){
+            $type = "Ranked";
+        }
+        else{
+            $type = "Practice";
+        }
 
         return $type;
     }

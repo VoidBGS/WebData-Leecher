@@ -10,7 +10,8 @@ abstract class Genre{
     "Captains Mode",
     "Captains Draft",
     "Least Played",
-    "All Random Deathmatch"
+    "All Random Deathmatch",
+    "None"
     );
 }
 ?>
