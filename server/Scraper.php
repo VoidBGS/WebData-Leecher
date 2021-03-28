@@ -11,7 +11,7 @@ $seperatedRows = Helper::SeperateTables($cleanPage);
 $dataRows = [];
 $allRows = substr_count($cleanPage, 'Skill');
 
-for ($i=0; $i <= $allRows ; $i++) { 
+for ($i=1; $i <= $allRows ; $i++) { 
     $currentRow = $seperatedRows[$i];
 
     $hero    = GetHeroName($currentRow);
@@ -22,6 +22,7 @@ for ($i=0; $i <= $allRows ; $i++) {
     $type    = GetGameType($currentRow);
     $genre   = GetGameGenre($currentRow);
     $length  = GetGameLength($currentRow);
+    $kda     = GetKDARecord($currentRow);
 
     $dataRow = new DataRowModel();
 
@@ -33,6 +34,7 @@ for ($i=0; $i <= $allRows ; $i++) {
     isset($type)    ? $dataRow->SetType($type)       : $dataRow->SetType(NULL);
     isset($genre)   ? $dataRow->SetGenre($genre)     : $dataRow->SetGenre(NULL);
     isset($length)  ? $dataRow->SetLength($length)   : $dataRow->SetLength(NULL);
+    isset($kda)     ? $dataRow->SetKDA($kda)         : $dataRow->SetKDA(NULL);
 
     array_push($dataRows, $dataRow);
 }
@@ -88,6 +90,20 @@ function GetGameLength($string){
     $length = Helper::get_string_between($string, '</div></td><td>', '<div class="bar bar-default"><div class="segment');
 
     return $length;
+}
+function GetKDARecord($string){
+    //KDA = (kills + assists)/ deaths
+    $htmlTree = Helper::get_string_between($string, '<span class="kda-record">', '</span></span>');
+    $extract = explode('<span class="value">', $htmlTree);
+    $kda = CalcKDA(trim($extract[1], "</span>"), trim($extract[2], "</span>"), $extract[3]);
+
+    return $kda;
+}
+
+function CalcKDA($kills, $deaths, $assists){
+    $kda = ($kills + $assists) / $deaths;
+
+    return round($kda, 2);
 }
 
 var_dump(json_encode($dataRows));

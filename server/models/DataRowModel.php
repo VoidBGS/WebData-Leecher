@@ -17,6 +17,8 @@ class DataRowModel implements \JsonSerializable
 
     private $length;
 
+    private $kda;
+
     public function GetHero(){
         return $this->hero;
     }
@@ -26,7 +28,7 @@ class DataRowModel implements \JsonSerializable
     }
 
     public function GetSkill(){
-        return $this->hero;
+        return $this->skill;
     }
 
     public function SetSkill($skill){
@@ -79,6 +81,14 @@ class DataRowModel implements \JsonSerializable
 
     public function SetLength($length){
         $this->length = $length;
+    }
+
+    public function GetKDA(){
+        return $this->kda;
+    }
+
+    public function SetKDA($kda){
+        $this->kda = $kda;
     }
 
     public function jsonSerialize()
